@@ -1,0 +1,4 @@
+/* Fallback so views/modals still hide correctly if the Tailwind CDN is unreachable. */
+.hidden { display: none !important; }
+.animate-fade-in { animation: fadeIn .18s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }

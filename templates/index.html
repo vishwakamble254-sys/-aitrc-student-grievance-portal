@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AITRC Vita - Department Grievance Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{{ url_for('static', filename='tailwind-config.js') }}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+
+    <!-- HEADER -->
+    <header class="bg-gradient-to-r from-indigo-900 via-indigo-800 to-slate-900 text-white shadow-xl sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div class="flex items-center space-x-3 text-center sm:text-left">
+                <div class="bg-white p-2 rounded-xl shadow-md text-indigo-900 flex items-center justify-center w-12 h-12">
+                    <i class="fa-solid fa-graduation-cap text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold tracking-tight">ADARSH INSTITUTE OF TECHNOLOGY AND RESEARCH CENTER VITA. (AITRC)</h1>
+                    <p class="text-xs text-indigo-200 uppercase tracking-widest font-medium">Department HOD Grievance Portal</p>
+                </div>
+            </div>
+            <div id="nav-auth-section" class="flex items-center space-x-3"></div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- 1. LOGIN -->
+        <div id="view-login" class="hidden max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-100 my-6">
+            <div class="bg-gradient-to-r from-indigo-800 to-indigo-900 p-6 text-white text-center">
+                <div class="inline-flex bg-white/10 p-3 rounded-full mb-3">
+                    <i class="fa-solid fa-shield-halved text-3xl text-indigo-200"></i>
+                </div>
+                <h2 class="text-2xl font-bold">Portal Access</h2>
+                <p class="text-xs text-indigo-200 mt-1">Select your role to proceed securely</p>
+            </div>
+            <form id="login-form" class="p-6 sm:p-8 space-y-6" novalidate>
+                <div>
+                    <label for="login-role" class="block text-sm font-semibold text-slate-700 mb-2">Select Role <span class="text-red-500">*</span></label>
+                    <select id="login-role" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 font-medium">
+                        <option value="student">Student</option>
+                        <option value="hod">Department HOD</option>
+                    </select>
+                </div>
+
+                <div id="student-login-container" class="space-y-4">
+                    <div>
+                        <label for="student-level-select" class="block text-sm font-semibold text-slate-700 mb-1">Select Study Level <span class="text-red-500">*</span></label>
+                        <select id="student-level-select" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 font-medium"></select>
+                    </div>
+                    <div>
+                        <label for="student-prn-input" class="block text-sm font-semibold text-slate-700 mb-1">PRN Number <span class="text-red-500">*</span></label>
+                        <input type="text" id="student-prn-input" inputmode="numeric" maxlength="15" autocomplete="username" placeholder="e.g. 202401001" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 font-mono">
+                    </div>
+                    <div>
+                        <label id="student-pass-label" for="student-pass-input" class="block text-sm font-semibold text-slate-700 mb-1">Password <span class="text-red-500">*</span></label>
+                        <input type="password" id="student-pass-input" maxlength="128" autocomplete="current-password" placeholder="Enter your password" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50">
+                    </div>
+                    <div id="student-confirm-group" class="hidden">
+                        <label for="student-confirm-input" class="block text-sm font-semibold text-slate-700 mb-1">Confirm Password <span class="text-red-500">*</span></label>
+                        <input type="password" id="student-confirm-input" maxlength="128" autocomplete="new-password" placeholder="Re-enter password (min 8 characters)" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50">
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <button type="button" data-action="toggle-register" id="toggle-register-btn" class="text-indigo-600 hover:underline font-semibold">New student? Create account</button>
+                        <button type="button" data-action="open-change-password" data-type="student" class="text-indigo-600 hover:underline font-semibold">Change Password?</button>
+                    </div>
+                </div>
+
+                <div id="hod-login-container" class="hidden space-y-4">
+                    <div>
+                        <label for="hod-level-select" class="block text-sm font-semibold text-slate-700 mb-1">Select Study Level <span class="text-red-500">*</span></label>
+                        <select id="hod-level-select" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 text-sm font-medium"></select>
+                    </div>
+                    <div>
+                        <label for="hod-dept-select" class="block text-sm font-semibold text-slate-700 mb-1">Select Department <span class="text-red-500">*</span></label>
+                        <select id="hod-dept-select" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 text-sm font-medium"></select>
+                    </div>
+                    <div>
+                        <label id="hod-pass-label" for="hod-pass-input" class="block text-sm font-semibold text-slate-700 mb-1">HOD Password <span class="text-red-500">*</span></label>
+                        <input type="password" id="hod-pass-input" maxlength="128" autocomplete="current-password" placeholder="Enter HOD password" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50">
+                    </div>
+                    <div id="hod-confirm-group" class="hidden">
+                        <label for="hod-confirm-input" class="block text-sm font-semibold text-slate-700 mb-1">Confirm Password <span class="text-red-500">*</span></label>
+                        <input type="password" id="hod-confirm-input" maxlength="128" autocomplete="new-password" placeholder="Re-enter password (min 8 characters)" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50">
+                    </div>
+                    <div id="hod-code-group" class="hidden">
+                        <label for="hod-code-input" class="block text-sm font-semibold text-slate-700 mb-1">HOD Setup Code <span class="text-red-500">*</span></label>
+                        <input type="password" id="hod-code-input" maxlength="128" autocomplete="off" placeholder="Code given by the college administrator" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50">
+                    </div>
+                    <div class="flex justify-between text-xs">
+                        <button type="button" data-action="toggle-hod-register" id="toggle-hod-register-btn" class="text-indigo-600 hover:underline font-semibold">New HOD? Register</button>
+                        <button type="button" data-action="open-change-password" data-type="hod" class="text-indigo-600 hover:underline font-semibold">Change Password?</button>
+                    </div>
+                </div>
+
+                <div id="student-info-note" class="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded-r-xl text-xs text-indigo-900 leading-relaxed">
+                    <p class="font-semibold mb-1"><i class="fa-solid fa-circle-info mr-1"></i> Student Privacy</p>
+                    Leave the name blank when submitting and your complaint is stored anonymously &mdash; your PRN is not saved with it. You get a secret tracking code to follow its status.
+                </div>
+
+                <button type="submit" id="login-submit-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg shadow-indigo-200 transition duration-200 flex items-center justify-center space-x-2">
+                    <span id="login-submit-label">Access Portal</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- 2. STUDENT VIEW -->
+        <div id="view-student" class="hidden space-y-8">
+            <div class="flex flex-wrap gap-3 bg-white p-2 rounded-2xl shadow-sm border border-slate-200 max-w-xl mx-auto">
+                <button type="button" data-action="student-tab" data-tab="submit" id="tab-btn-submit" class="flex-1 py-3 px-4 rounded-xl font-semibold text-sm transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-pen-to-square"></i><span>Submit Complaint</span>
+                </button>
+                <button type="button" data-action="student-tab" data-tab="track" id="tab-btn-track" class="flex-1 py-3 px-4 rounded-xl font-semibold text-sm transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-magnifying-glass"></i><span>Track Status</span>
+                </button>
+            </div>
+
+            <div id="student-tab-submit" class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-indigo-800 to-indigo-900 p-6 text-white">
+                    <h2 class="text-xl font-bold flex items-center space-x-2">
+                        <i class="fa-solid fa-file-circle-exclamation text-indigo-300"></i>
+                        <span>Register a New Complaint</span>
+                    </h2>
+                    <p class="text-xs text-indigo-200 mt-1">Your voice matters at AITRC Vita. Raise your concerns safely and securely to your HOD.</p>
+                </div>
+                <form id="complaint-form" class="p-6 sm:p-8 space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
+                        <div>
+                            <label for="c-level" class="block text-xs font-bold uppercase tracking-wider text-indigo-900 mb-1">Study Level <span class="text-red-500">*</span></label>
+                            <select id="c-level" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white text-sm"></select>
+                        </div>
+                        <div>
+                            <label for="c-dept" class="block text-xs font-bold uppercase tracking-wider text-indigo-900 mb-1">Department / Branch <span class="text-red-500">*</span></label>
+                            <select id="c-dept" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white text-sm"></select>
+                        </div>
+                        <div>
+                            <label for="c-year" class="block text-xs font-bold uppercase tracking-wider text-indigo-900 mb-1">Year of Study <span class="text-red-500">*</span></label>
+                            <select id="c-year" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white text-sm"></select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label for="c-category" class="block text-sm font-semibold text-slate-700 mb-2">Complaint Category <span class="text-red-500">*</span></label>
+                            <select id="c-category" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50"></select>
+                        </div>
+                        <div>
+                            <label for="c-name" class="block text-sm font-semibold text-slate-700 mb-1">Your Name <span class="text-slate-400 font-normal">(Optional)</span></label>
+                            <input type="text" id="c-name" maxlength="80" autocomplete="off" placeholder="Leave blank for 100% anonymous" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 text-sm">
+                            <p class="text-xs text-slate-500 mt-1">Logged in as PRN: <span id="form-logged-prn" class="font-mono font-semibold text-indigo-600"></span> (shared with HOD only if you enter a name)</p>
+                        </div>
+                    </div>
+
+                    <div id="custom-category-container" class="hidden space-y-2 bg-amber-50/50 p-4 rounded-xl border border-amber-200">
+                        <label for="c-custom-text" class="block text-sm font-semibold text-amber-900 mb-1"><i class="fa-solid fa-pen-nib mr-1"></i> Specify Your Personal / Other Problem <span class="text-red-500">*</span></label>
+                        <input type="text" id="c-custom-text" maxlength="150" placeholder="Please describe the specific issue title here..." class="w-full px-4 py-3 rounded-xl border border-amber-300 focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white text-sm">
+                    </div>
+
+                    <div>
+                        <label for="c-subject" class="block text-sm font-semibold text-slate-700 mb-2">Complaint Subject <span class="text-red-500">*</span></label>
+                        <input type="text" id="c-subject" required maxlength="150" placeholder="e.g., Issue regarding practical batch schedule" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50">
+                    </div>
+
+                    <div>
+                        <label for="c-desc" class="block text-sm font-semibold text-slate-700 mb-2">Detailed Description <span class="text-red-500">*</span></label>
+                        <textarea id="c-desc" required rows="4" minlength="10" maxlength="3000" placeholder="Provide relevant details (dates, locations, names if applicable)..." class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 text-sm"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3.5 px-4 rounded-xl shadow-lg shadow-indigo-200 transition duration-200 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-paper-plane"></i><span>Submit Complaint Securely to HOD</span>
+                    </button>
+                </form>
+            </div>
+
+            <div id="student-tab-track" class="hidden max-w-2xl mx-auto space-y-6">
+                <form id="track-form" class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 sm:p-8">
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Track Complaint Status</h3>
+                    <p class="text-sm text-slate-500 mb-6">Enter the tracking code you received when you submitted your complaint.</p>
+                    <div class="flex gap-3">
+                        <input type="text" id="track-pin-input" maxlength="20" autocomplete="off" spellcheck="false" placeholder="XXXX-XXXX-XXXX" class="flex-grow px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none tracking-widest font-mono uppercase bg-slate-50">
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-xl shadow-md transition flex items-center space-x-2">
+                            <i class="fa-solid fa-search"></i><span>Track</span>
+                        </button>
+                    </div>
+                </form>
+                <div id="track-result-container" class="hidden"></div>
+            </div>
+        </div>
+
+        <!-- 3. HOD VIEW -->
+        <div id="view-hod" class="hidden space-y-6">
+            <div class="bg-gradient-to-r from-indigo-900 to-slate-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="inline-flex items-center space-x-2 bg-indigo-500/30 px-3 py-1 rounded-full text-indigo-200 text-xs font-semibold mb-2">
+                        <i class="fa-solid fa-user-tie text-amber-300"></i>
+                        <span id="hod-banner-dept-title">Department HOD Portal</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-bold">Department Grievance Dashboard</h2>
+                    <p class="text-indigo-200 text-xs sm:text-sm mt-1">Review, monitor, and resolve student complaints submitted for your branch.</p>
+                </div>
+                <button type="button" data-action="export" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 text-sm font-semibold px-4 py-2.5 rounded-xl transition flex items-center space-x-2">
+                    <i class="fa-solid fa-download"></i><span>Export Report</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                    <div class="bg-indigo-50 text-indigo-600 w-12 h-12 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-inbox"></i></div>
+                    <div><p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Total</p><h3 id="stat-total" class="text-2xl font-bold text-slate-800">0</h3></div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                    <div class="bg-amber-50 text-amber-600 w-12 h-12 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-clock"></i></div>
+                    <div><p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Pending</p><h3 id="stat-pending" class="text-2xl font-bold text-amber-600">0</h3></div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                    <div class="bg-blue-50 text-blue-600 w-12 h-12 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-spinner"></i></div>
+                    <div><p class="text-xs font-medium text-slate-500 uppercase tracking-wide">In Progress</p><h3 id="stat-progress" class="text-2xl font-bold text-blue-600">0</h3></div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center space-x-4">
+                    <div class="bg-emerald-50 text-emerald-600 w-12 h-12 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-circle-check"></i></div>
+                    <div><p class="text-xs font-medium text-slate-500 uppercase tracking-wide">Resolved</p><h3 id="stat-resolved" class="text-2xl font-bold text-emerald-600">0</h3></div>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row gap-3 justify-between items-center">
+                <div id="filter-buttons" class="flex flex-wrap gap-2 w-full sm:w-auto"></div>
+                <div class="w-full sm:w-72 relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400"><i class="fa-solid fa-search"></i></span>
+                    <input type="search" id="search-input" maxlength="100" aria-label="Search complaints" placeholder="Search by subject, PRN, category..." class="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
+                                <th class="py-4 px-6">Ref & Date</th>
+                                <th class="py-4 px-6">Student & PRN</th>
+                                <th class="py-4 px-6">Category & Year</th>
+                                <th class="py-4 px-6">Subject & Description</th>
+                                <th class="py-4 px-6">Status</th>
+                                <th class="py-4 px-6 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="hod-table-body" class="divide-y divide-slate-100 text-sm"></tbody>
+                    </table>
+                </div>
+                <div id="no-complaints-msg" class="hidden p-12 text-center text-slate-400">
+                    <i class="fa-solid fa-folder-open text-4xl mb-3"></i>
+                    <p class="text-base font-medium">No complaints found matching criteria.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-6 text-center text-xs mt-auto border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 space-y-1">
+            <p class="font-semibold text-slate-300">Adarsh Institute of Technology and Research Center Vita. (AITRC)</p>
+            <p>Institutional Grievance Redressal &amp; Student Support Portal. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- SUCCESS MODAL -->
+    <div id="modal-success" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="success-title">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 sm:p-8 text-center space-y-5 animate-fade-in">
+            <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-4xl"><i class="fa-solid fa-check"></i></div>
+            <div>
+                <h3 id="success-title" class="text-2xl font-bold text-slate-800">Complaint Submitted!</h3>
+                <p class="text-xs text-slate-500 mt-1">Your complaint has been sent to your Department HOD. Reference: <span id="modal-ref" class="font-mono font-semibold"></span></p>
+            </div>
+            <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-2xl space-y-2">
+                <p class="text-xs font-semibold text-indigo-900 uppercase tracking-wider">Your Secret Tracking Code</p>
+                <div id="modal-pin-display" class="text-2xl font-mono font-extrabold text-indigo-600 tracking-widest bg-white py-2 px-4 rounded-xl border border-indigo-100 select-all">------</div>
+                <button type="button" data-action="copy-pin" class="text-xs text-indigo-700 font-semibold hover:underline"><i class="fa-regular fa-copy mr-1"></i>Copy code</button>
+                <p class="text-[11px] text-indigo-700 font-medium">Save this code now! It is shown only once and cannot be recovered &mdash; you need it to track your complaint.</p>
+            </div>
+            <button type="button" data-action="close-success" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition">Done / Track my complaint</button>
+        </div>
+    </div>
+
+    <!-- DETAIL MODAL (HOD) -->
+    <div id="modal-detail" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="detail-subject">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 sm:p-8 space-y-6 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-start border-b border-slate-100 pb-4">
+                <div>
+                    <span id="detail-ref-badge" class="font-mono text-xs font-bold px-2.5 py-1 bg-indigo-100 text-indigo-800 rounded-lg"></span>
+                    <h3 id="detail-subject" class="text-lg font-bold text-slate-800 mt-2"></h3>
+                </div>
+                <button type="button" data-action="close-detail" aria-label="Close" class="text-slate-400 hover:text-slate-600 text-xl p-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-4 text-sm">
+                <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div><span class="text-xs font-semibold text-slate-400 block">Category</span><span id="detail-category" class="font-semibold text-indigo-700"></span></div>
+                    <div><span class="text-xs font-semibold text-slate-400 block">Level &amp; Year</span><span id="detail-year" class="font-semibold text-slate-700"></span></div>
+                    <div><span class="text-xs font-semibold text-slate-400 block">Student &amp; PRN</span><span id="detail-name" class="font-semibold text-slate-700"></span></div>
+                    <div><span class="text-xs font-semibold text-slate-400 block">Date</span><span id="detail-date" class="font-semibold text-slate-700"></span></div>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold text-slate-400 block mb-1">Full Description</span>
+                    <p id="detail-desc" class="p-4 bg-slate-50 rounded-xl text-slate-700 border border-slate-200 whitespace-pre-wrap leading-relaxed break-words"></p>
+                </div>
+                <div class="space-y-2 pt-2 border-t border-slate-100">
+                    <label for="detail-status" class="block text-xs font-bold uppercase tracking-wider text-slate-600">Update Status</label>
+                    <select id="detail-status" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 font-medium"></select>
+                </div>
+                <div class="space-y-2">
+                    <label for="detail-remarks" class="block text-xs font-bold uppercase tracking-wider text-slate-600">HOD Remarks / Action Taken</label>
+                    <textarea id="detail-remarks" rows="3" maxlength="1000" placeholder="Enter remarks or action taken note for the student..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 text-sm"></textarea>
+                </div>
+            </div>
+            <div class="flex gap-3 pt-4 border-t border-slate-100">
+                <button type="button" data-action="close-detail" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 px-4 rounded-xl transition text-sm">Cancel</button>
+                <button type="button" data-action="save-detail" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition text-sm">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHANGE PASSWORD MODAL -->
+    <div id="modal-change-pass" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="cp-modal-title">
+        <form id="change-pass-form" class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 sm:p-8 space-y-5 animate-fade-in">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 id="cp-modal-title" class="text-xl font-bold text-slate-800">Change Password</h3>
+                <button type="button" data-action="close-change-password" aria-label="Close" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-4">
+                <div id="cp-student-group">
+                    <label for="cp-prn" class="block text-sm font-semibold text-slate-700 mb-1">PRN Number <span class="text-red-500">*</span></label>
+                    <input type="text" id="cp-prn" inputmode="numeric" maxlength="15" autocomplete="username" placeholder="Enter your PRN" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 font-mono text-sm">
+                </div>
+                <div id="cp-hod-group" class="hidden space-y-4">
+                    <div>
+                        <label for="cp-level" class="block text-sm font-semibold text-slate-700 mb-1">Study Level <span class="text-red-500">*</span></label>
+                        <select id="cp-level" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 text-sm font-medium"></select>
+                    </div>
+                    <div>
+                        <label for="cp-dept" class="block text-sm font-semibold text-slate-700 mb-1">Department <span class="text-red-500">*</span></label>
+                        <select id="cp-dept" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 text-sm font-medium"></select>
+                    </div>
+                </div>
+                <div>
+                    <label for="cp-old" class="block text-sm font-semibold text-slate-700 mb-1">Current Password <span class="text-red-500">*</span></label>
+                    <input type="password" id="cp-old" maxlength="128" autocomplete="current-password" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 text-sm">
+                </div>
+                <div>
+                    <label for="cp-new" class="block text-sm font-semibold text-slate-700 mb-1">New Password <span class="text-red-500">*</span> <span class="font-normal text-slate-400">(min 8 characters)</span></label>
+                    <input type="password" id="cp-new" maxlength="128" autocomplete="new-password" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50 text-sm">
+                </div>
+            </div>
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition text-sm">Update Password</button>
+        </form>
+    </div>
+
+    <div id="toast-container" class="fixed top-4 right-4 z-[60] space-y-2 w-80 max-w-[calc(100vw-2rem)]" aria-live="polite"></div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
